@@ -1,0 +1,11 @@
+Flask
+Flask-Cors
+Flask-JWT-Extended
+Flask-SQLAlchemy
+gunicorn
+pandas
+PyJWT==2.8.0
+pyodbc==5.0.1
+more_itertools
+pytest
+python-dotenv

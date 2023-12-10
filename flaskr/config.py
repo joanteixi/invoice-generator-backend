@@ -1,0 +1,13 @@
+import os
+# database connecction
+SQL_SERVER_NAME = os.environ['SQL_SERVER_NAME']
+SQL_DATABASE_NAME=os.environ['SQL_DATABASE_NAME']
+SQL_USER_NAME=os.environ['SQL_USER_NAME']
+SQL_PASSWORD=os.environ['SQL_PASSWORD']
+
+
+# jwt secret key
+JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
+JWT_ACCESS_TOKEN_EXPIRES = os.environ['JWT_ACCESS_TOKEN_EXPIRES']
+JWT_REFRESH_TOKEN_EXPIRES = os.environ['JWT_REFRESH_TOKEN_EXPIRES']
+
