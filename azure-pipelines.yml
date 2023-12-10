@@ -9,8 +9,8 @@ resources:
 - repo: self
 
 variables:
-  containerRegistry_name: 'sc-acrsumarizaciontextocr01'
-  repository_name: 'Sumarizacion de Texto'
+  containerRegistry_name: 'Laiogurtera container registry'
+  repository_name: simple-invoice-be
   tag: '$(Build.BuildId)'
 
 stages:
