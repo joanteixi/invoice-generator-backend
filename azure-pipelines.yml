@@ -9,7 +9,7 @@ resources:
 - repo: self
 
 variables:
-  containerRegistry_name: 'Laiogurtera container registry'
+  containerRegistry_name: LaiogurteraContainerRegistry
   repository_name: simple-invoice-be
   tag: '$(Build.BuildId)'
 
