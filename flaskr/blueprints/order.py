@@ -14,7 +14,20 @@ def create_order():
     customer_name = data.get('customer_name')
     order_items = data.get('order_items')
 
-    order = Order(customer_name=customer_name)
+    #if data contains some id, it's not a new order
+    if data.get('id'):
+        order = Order.query.get(data.get('id'))
+        
+        # update order with new values
+        order.update(**data)
+        
+        # delete all order items for this order
+        for item in order.order_items:
+            db.session.delete(item) 
+        
+    else:
+        order = Order(customer_name=customer_name)
+    
     db.session.add(order)
     db.session.commit()
 
@@ -59,7 +72,7 @@ def get_order(order_id):
     return jsonify({'message': 'Order not found'})
 
 # Update an order
-@bp.route('/order/<int:order_id>', methods=['PUT'])
+@bp.route('<int:order_id>', methods=['PUT'])
 def update_order(order_id):
     order = Order.query.get(order_id)
     if order:
@@ -70,13 +83,18 @@ def update_order(order_id):
     return jsonify({'message': 'Order not found'})
 
 # Delete an order
-@bp.route('/order/<int:order_id>', methods=['DELETE'])
+@bp.route('<int:order_id>', methods=['DELETE'])
 def delete_order(order_id):
     order = Order.query.get(order_id)
     if order:
         db.session.delete(order)
+        # delete all order items for this order
+        for item in order.order_items:
+            db.session.delete(item)
+            
         db.session.commit()
         return jsonify({'message': 'Order deleted successfully'})
+    
     return jsonify({'message': 'Order not found'})
 
 # Create an order item

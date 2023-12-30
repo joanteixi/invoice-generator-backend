@@ -21,7 +21,7 @@ def create_app(testing=False):
     app = Flask(__name__, instance_relative_config=True)
 
     app.config['TESTING'] = testing    
-        
+    
     # ensure the instance folder exists
     if not os.path.exists(app.instance_path):
         os.makedirs(app.instance_path)
@@ -36,11 +36,24 @@ def create_app(testing=False):
     app.config.from_pyfile(os.path.join(
         app.instance_path, '..', 'flaskr/config.py'), silent=True)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_database.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+    app.config['sql'] = False
 
     if app.config['TESTING']:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test_database.sqlite'
-       
+    else:
+        driver = "{ODBC Driver 17 for SQL Server}"
+        # driver = "{SQL Server}"
+        server = f"{app.config['SQL_SERVER_NAME']}.database.windows.net"
+        database = app.config['SQL_DATABASE_NAME']
+        user = app.config['SQL_USER_NAME']
+        password = app.config['SQL_PASSWORD']
+
+        params = urllib.parse.quote_plus(
+            f"DRIVER={driver};SERVER={server};DATABASE={database};UID={user};PWD={password}")
+
+        app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
+
     # configure extensions - ddbb
     db.init_app(app)
     with app.app_context():
