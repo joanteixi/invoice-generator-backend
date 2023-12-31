@@ -12,6 +12,10 @@ class OrderItem(db.Model):
   order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
   order = db.relationship('Order', back_populates='order_items')
 
+  # many-to-one with Concept
+  concept_id = db.Column(db.Integer, db.ForeignKey('concepts.id'))
+  concept = db.relationship('Concept', back_populates='order_items')
+  
   def as_dict(self):
     return {c.name: getattr(self, c.name) for c in self.__table__.columns}
   

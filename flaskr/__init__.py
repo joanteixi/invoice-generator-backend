@@ -7,9 +7,11 @@ from dotenv import load_dotenv
 
 from flask import Flask
 from werkzeug.security import generate_password_hash
+from flask_migrate import Migrate
 
 from flaskr.extensions import db
 from flaskr.models.order_model import *
+from flaskr.models.concept_model import *
 from flaskr.models.order_items_model import *
 from flaskr.models.user_model import *
 from flaskr.extensions import jwt
@@ -55,6 +57,8 @@ def create_app(testing=False):
         app.config['SQLALCHEMY_DATABASE_URI'] = "mssql+pyodbc:///?odbc_connect=%s" % params
 
     # configure extensions - ddbb
+    migrate = Migrate(app, db)
+
     db.init_app(app)
     with app.app_context():
         db.create_all()
@@ -76,9 +80,11 @@ def create_app(testing=False):
     # import blueprints
     from flaskr.blueprints import user
     from flaskr.blueprints import order
+    from flaskr.blueprints import concept
 
     app.register_blueprint(user.bp)
     app.register_blueprint(order.bp)
+    app.register_blueprint(concept.bp)
    
 
     return app
