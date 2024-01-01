@@ -9,3 +9,4 @@ pyodbc==5.0.1
 more_itertools
 pytest
 python-dotenv
+Flask-Migrate
