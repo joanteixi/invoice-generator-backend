@@ -4,7 +4,6 @@ class OrderItem(db.Model):
   __tablename__ = 'order_items'
 
   id = db.Column(db.Integer, primary_key=True)
-  product_name = db.Column(db.String)
   quantity = db.Column(db.Integer)
   price = db.Column(db.Float)
 

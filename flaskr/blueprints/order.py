@@ -3,6 +3,7 @@ from flaskr.extensions import db
 from flask_cors import CORS
 from flaskr.models.order_model import Order
 from flaskr.models.order_items_model import OrderItem
+from flaskr.models.concept_model import Concept
 
 bp = Blueprint('document', __name__, url_prefix='/api/orders')
 CORS(bp)
@@ -11,7 +12,6 @@ CORS(bp)
 @bp.route('', methods=['POST'])
 def create_order():
     data = request.get_json()
-    customer_name = data.get('customer_name')
     order_items = data.get('order_items')
 
     #if data contains some id, it's not a new order
@@ -26,18 +26,23 @@ def create_order():
             db.session.delete(item) 
         
     else:
-        order = Order(customer_name=customer_name)
+        order = Order(
+            customer_name = data.get('customer_name'), 
+            payment_type_id = data.get('payment_type_id'), 
+            total_base = data.get('total_base')
+        )
     
     db.session.add(order)
-    db.session.commit()
-
-    for item in order_items:
-        product_name = item.get('product_name')
-        quantity = item.get('quantity')
-        price = item.get('price')
-
-        order_item = OrderItem(product_name=product_name, quantity=quantity, price=price, order_id=order.id)
+    
+    for item in order_items:        
+        order_item = OrderItem(
+            quantity=item.get('quantity'), 
+            price=item.get('price'), 
+            order_id=order.id,
+            concept_id=item.get('concept')
+            )
         db.session.add(order_item)
+    
     
     db.session.commit()
     
@@ -62,16 +67,24 @@ def get_all_orders():
 @bp.route('<int:order_id>', methods=['GET'])
 def get_order(order_id):
     order = Order.query.get(order_id)
+
     if order:
         order_data = order.as_dict()
         order_items = OrderItem.query.filter_by(order_id=order.id).all()
-        order_data['order_items'] = [item.as_dict() for item in order_items]
+        order_data['order_items'] = []
         
+        for item in order_items:
+            item_array = item.as_dict()
+            concept_id = item.concept_id
+            concept = Concept.query.get(concept_id)
+            item_array['concept'] = concept.name
+            order_data['order_items'].append(item_array)
+            
+
         return jsonify(order_data)
-    
+            
     return jsonify({'message': 'Order not found'})
 
-# Update an order
 @bp.route('<int:order_id>', methods=['PUT'])
 def update_order(order_id):
     order = Order.query.get(order_id)
@@ -94,7 +107,7 @@ def delete_order(order_id):
             
         db.session.commit()
         return jsonify({'message': 'Order deleted successfully'})
-    
+
     return jsonify({'message': 'Order not found'})
 
 # Create an order item
@@ -107,6 +120,7 @@ def create_order_item(order_id):
         order.order_items.append(order_item)
         db.session.commit()
         return jsonify({'message': 'Order item created successfully'})
+    
     return jsonify({'message': 'Order not found'})
 
 # Read all order items for a specific order

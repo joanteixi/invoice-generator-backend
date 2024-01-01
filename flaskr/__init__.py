@@ -14,6 +14,7 @@ from flaskr.models.order_model import *
 from flaskr.models.concept_model import *
 from flaskr.models.order_items_model import *
 from flaskr.models.user_model import *
+from flaskr.models.payment_type import *
 from flaskr.extensions import jwt
 
 def create_app(testing=False):
@@ -81,10 +82,12 @@ def create_app(testing=False):
     from flaskr.blueprints import user
     from flaskr.blueprints import order
     from flaskr.blueprints import concept
+    from flaskr.blueprints import payment_type
 
     app.register_blueprint(user.bp)
     app.register_blueprint(order.bp)
     app.register_blueprint(concept.bp)
+    app.register_blueprint(payment_type.bp)
    
 
     return app
