@@ -6,7 +6,7 @@ class OrderItem(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   quantity = db.Column(db.Integer)
   price = db.Column(db.Float)
-
+  total_item = db.Column(db.Float)
   # Establish a many-to-one relationship with Order
   order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
   order = db.relationship('Order', back_populates='order_items')

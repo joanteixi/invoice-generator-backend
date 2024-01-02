@@ -39,7 +39,8 @@ def create_order():
             quantity=item.get('quantity'), 
             price=item.get('price'), 
             order_id=order.id,
-            concept_id=item.get('concept')
+            concept_id=item.get('concept'),
+            total_item=item.get('total_item')
             )
         db.session.add(order_item)
     

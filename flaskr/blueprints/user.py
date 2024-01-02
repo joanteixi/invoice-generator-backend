@@ -118,6 +118,18 @@ def create_user():
         }), 200
 
 
+@bp.route("sign-in-with-token", methods=["POST"], endpoint='sign-in-with-token')
+@jwt_required()
+def login_with_token():
+    user = User.query.filter_by(public_id=get_jwt_identity()).one_or_none()
+    access_token = create_access_token(identity=user.public_id, additional_claims={
+                                       "is_admin": user.is_admin})
+    refresh_token = create_refresh_token(identity=user.public_id, additional_claims={
+                                         "is_admin": user.is_admin})
+    
+
+    return jsonify(status="success", message="User successfully logged in", access_token=access_token, refresh_token=refresh_token, user=user.as_dict()), 200
+
 @bp.route("", methods=["GET"], endpoint='get_user')
 @jwt_required()
 def get_user():

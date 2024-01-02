@@ -8,6 +8,7 @@ class User(db.Model):
     public_id = db.Column(db.String(200), unique=True, nullable=False)
     username = db.Column(db.String(200), nullable=False)
     email = db.Column(db.String(250), unique=True, nullable=False)
+    avatar = db.Column(db.String(250))
     password = db.Column(db.String(500), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False)
     create_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
