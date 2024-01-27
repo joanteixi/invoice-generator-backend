@@ -7,13 +7,13 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     customer_name = db.Column(db.String)
     total_base = db.Column(db.Float)
+    created_by = db.Column(db.String)
     
     # Establish a one-to-many relationship with PaymentType
     payment_type_id = db.Column(db.Integer, db.ForeignKey('payment_types.id'))
     payment_type = db.relationship('PaymentType', back_populates='orders')
     
 
-    
     # Establish a one-to-many relationship with OrderItem
     order_items = db.relationship('OrderItem', back_populates='order')
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())

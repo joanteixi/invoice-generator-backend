@@ -4,12 +4,15 @@ from flask_cors import CORS
 from flaskr.models.order_model import Order
 from flaskr.models.order_items_model import OrderItem
 from flaskr.models.concept_model import Concept
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 bp = Blueprint('document', __name__, url_prefix='/api/orders')
 CORS(bp)
 
 # Create an order
 @bp.route('', methods=['POST'])
+@jwt_required()
 def create_order():
     data = request.get_json()
     order_items = data.get('order_items')
@@ -29,7 +32,8 @@ def create_order():
         order = Order(
             customer_name = data.get('customer_name'), 
             payment_type_id = data.get('payment_type_id'), 
-            total_base = data.get('total_base')
+            total_base = data.get('total_base'),
+            created_by = get_jwt_identity()
         )
     
     db.session.add(order)
