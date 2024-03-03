@@ -208,7 +208,7 @@ def get_shared_invoice(public_url):
 @bp.route('<int:order_id>/send_whatsapp', methods=['POST'])
 async def send_whatsapp(order_id):
     order = Order.query.filter_by(id=order_id).first()
-    await whatsapp.send_message('+34679201018', 'https://www.puceduca.cat')
+    await whatsapp.send_message('+34679201018', f'https://tiquets.puceduca.cat/accounting/shared_version/{order.public_url}')
     
     
     return jsonify({'message': 'Sended Message'})

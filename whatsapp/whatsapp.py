@@ -44,7 +44,7 @@ def get_text_message_input(recipient, url):
   return json.dumps({
     "messaging_product": "whatsapp",
     "recipient_type": "individual",
-    "preview_url": False,
+    "preview_url": True,
     "to": recipient,
     "type": "template",
     "template": {
