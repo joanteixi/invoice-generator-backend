@@ -29,19 +29,7 @@ def create_order():
         # delete all order items for this order
         for item in order.order_items:
             db.session.delete(item) 
-        
-        # create order items againg
-        for item in order_items:
-            order_item = OrderItem(
-                quantity=item.get('quantity'),
-                price=item.get('price'),
-                order_id=order.id,
-                concept_id=item.get('concept'),
-                total_item=item.get('total_item')
-            )
-        
-        
-        
+    
     else:
         order = Order(
             customer_name = data.get('customer_name'), 
@@ -52,7 +40,8 @@ def create_order():
         )
     
     db.session.add(order)
-    
+    db.session.commit()
+
     for item in order_items:
         order_item = OrderItem(
             quantity=item.get('quantity'),
@@ -108,16 +97,6 @@ def get_order(order_id):
 
         return jsonify(order_data)
             
-    return jsonify({'message': 'Order not found'})
-
-@bp.route('<int:order_id>', methods=['PUT'])
-def update_order(order_id):
-    order = Order.query.get(order_id)
-    if order:
-        data = request.get_json()
-        order.update(**data)
-        db.session.commit()
-        return jsonify({'message': 'Order updated successfully'})
     return jsonify({'message': 'Order not found'})
 
 # Delete an order
