@@ -8,7 +8,7 @@ class Concept(db.Model):
     name = db.Column(db.String)
     base_price = db.Column(db.Float)
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
-
+    active = db.Column(db.Float)
     # Establish a one-to-many relationship with OrderItem
     order_items = db.relationship('OrderItem', back_populates='concept')
     

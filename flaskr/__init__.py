@@ -4,10 +4,10 @@ import logging
 from datetime import timedelta
 import urllib.parse
 from dotenv import load_dotenv
+from flask_migrate import Migrate
 
 from flask import Flask
 from werkzeug.security import generate_password_hash
-from flask_migrate import Migrate
 
 from flaskr.extensions import db
 from flaskr.models.order_model import *

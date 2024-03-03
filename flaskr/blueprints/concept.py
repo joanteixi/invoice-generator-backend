@@ -8,7 +8,7 @@ CORS(bp)
 
 @bp.route('', methods=['GET'])
 def get_all_concepts():
-    concepts = Concept.query.all()
+    concepts = Concept.query.filter_by(active=1).order_by(Concept.name).all()
     result = []
     
     for concept in concepts:

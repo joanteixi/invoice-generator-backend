@@ -4,8 +4,10 @@ from flask_cors import CORS
 from flaskr.models.order_model import Order
 from flaskr.models.order_items_model import OrderItem
 from flaskr.models.concept_model import Concept
+from flaskr.models.user_model import User
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
+import uuid
+from whatsapp import whatsapp
 
 bp = Blueprint('document', __name__, url_prefix='/api/orders')
 CORS(bp)
@@ -33,20 +35,21 @@ def create_order():
             customer_name = data.get('customer_name'), 
             payment_type_id = data.get('payment_type_id'), 
             total_base = data.get('total_base'),
-            created_by = get_jwt_identity()
+            created_by = get_jwt_identity(),
+            public_url = str(uuid.uuid4())
         )
     
     db.session.add(order)
     
-    for item in order_items:        
+    for item in order_items:
         order_item = OrderItem(
-            quantity=item.get('quantity'), 
-            price=item.get('price'), 
-            order_id=order.id,
-            concept_id=item.get('concept'),
-            total_item=item.get('total_item')
-            )
-        db.session.add(order_item)
+        quantity=item.get('quantity'),
+        price=item.get('price'),
+        order_id=order.id,
+        concept_id=item.get('concept'),
+        total_item=item.get('total_item')
+        )
+    db.session.add(order_item)
     
     
     db.session.commit()
@@ -64,6 +67,11 @@ def get_all_orders():
         order_data = order.as_dict()
         order_items = OrderItem.query.filter_by(order_id=order.id).all()
         order_data['order_items'] = [item.as_dict() for item in order_items]
+        
+        # Get the user name that created the order
+        created_by_user = User.query.filter_by(public_id=order.created_by).first()
+        order_data['created_by'] = created_by_user.username
+        
         result.append(order_data)
     
     return jsonify(result)
@@ -165,7 +173,7 @@ def update_order_item(order_id, item_id):
     return jsonify({'message': 'Order not found'})
 
 # Delete an order item
-@bp.route('/order/<int:order_id>/item/<int:item_id>', methods=['DELETE'])
+@bp.route('<int:order_id>/item/<int:item_id>', methods=['DELETE'])
 def delete_order_item(order_id, item_id):
     order = Order.query.get(order_id)
     if order:
@@ -176,4 +184,33 @@ def delete_order_item(order_id, item_id):
             return jsonify({'message': 'Order item deleted successfully'})
         return jsonify({'message': 'Order item not found'})
     return jsonify({'message': 'Order not found'})
+
+
+# show invoice by public_url
+@bp.route('/shared_order/<string:public_url>', methods=['GET'])
+def get_shared_invoice(public_url):
+    order = Order.query.filter_by(public_url=public_url).first()
+    if order:
+        order_data = order.as_dict()
+        order_items = OrderItem.query.filter_by(order_id=order.id).all()
+        order_data['order_items'] = [item.as_dict() for item in order_items]
+        
+        # Get the user name that created the order
+        created_by_user = User.query.filter_by(public_id=order.created_by).first()
+        order_data['created_by'] = created_by_user.username
+        
+        return jsonify(order_data)
+    
+    return jsonify({'message': 'Order not found'})
+
+
+# send whatsapp shared-url
+@bp.route('<int:order_id>/send_whatsapp', methods=['POST'])
+async def send_whatsapp(order_id):
+    order = Order.query.filter_by(id=order_id).first()
+    await whatsapp.send_message('+34679201018', 'https://www.puceduca.cat')
+    
+    
+    return jsonify({'message': 'Sended Message'})
+
 
