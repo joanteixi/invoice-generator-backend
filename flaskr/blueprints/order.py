@@ -30,6 +30,18 @@ def create_order():
         for item in order.order_items:
             db.session.delete(item) 
         
+        # create order items againg
+        for item in order_items:
+            order_item = OrderItem(
+                quantity=item.get('quantity'),
+                price=item.get('price'),
+                order_id=order.id,
+                concept_id=item.get('concept'),
+                total_item=item.get('total_item')
+            )
+        
+        
+        
     else:
         order = Order(
             customer_name = data.get('customer_name'), 
@@ -43,13 +55,13 @@ def create_order():
     
     for item in order_items:
         order_item = OrderItem(
-        quantity=item.get('quantity'),
-        price=item.get('price'),
-        order_id=order.id,
-        concept_id=item.get('concept'),
-        total_item=item.get('total_item')
-        )
-    db.session.add(order_item)
+            quantity=item.get('quantity'),
+            price=item.get('price'),
+            order_id=order.id,
+            concept_id=item.get('concept'),
+            total_item=item.get('total_item')
+            )
+        db.session.add(order_item)
     
     
     db.session.commit()
