@@ -9,6 +9,9 @@ class Order(db.Model):
     total_base = db.Column(db.Float)
     created_by = db.Column(db.String)
     public_url = db.Column(db.String)
+    month = db.Column(db.Integer)
+    year = db.Column(db.Integer)
+    
     
     # Establish a one-to-many relationship with PaymentType
     payment_type_id = db.Column(db.Integer, db.ForeignKey('payment_types.id'))

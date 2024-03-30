@@ -7,6 +7,9 @@ class OrderItem(db.Model):
   quantity = db.Column(db.Integer)
   price = db.Column(db.Float)
   total_item = db.Column(db.Float)
+  month = db.Column(db.Integer)
+  year = db.Column(db.Integer)
+  
   # Establish a many-to-one relationship with Order
   order_id = db.Column(db.Integer, db.ForeignKey('orders.id'))
   order = db.relationship('Order', back_populates='order_items')
